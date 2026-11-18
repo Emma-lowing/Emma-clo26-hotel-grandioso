@@ -15,6 +15,17 @@ namespace HotelGrandioso.Data
         public DbSet<SpaBooking> SpaBookings { get; set; } = null!;
         public DbSet<Treatment> Treatments { get; set; } = null!;
 
+
+        protected override void
+        OnConfiguring(DbContextOptionsBuilder options)
+        {
+            string? connectionString = Environment.GetEnvironmentVariable("HOTEL_DB");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new InvalidOperationException("Miljövariabeln HOTEL_DB saknas.");
+            }
+            options.UseSqlite(connectionString);
+        }
     }
 }
  
