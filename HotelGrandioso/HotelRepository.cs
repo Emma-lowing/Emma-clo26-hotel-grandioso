@@ -110,5 +110,12 @@ namespace HotelGrandioso.Repositories
             Console.WriteLine($"Spabokning skapad med ID: {spaBooking.Id}");
         }
 
+        public List<SpaBooking> GetAllSpaBookings() // Hämtar alla spabokningar tillsammans med gäst och behandling.
+        {
+            return db.SpaBookings
+                .Include(s => s.Guest)
+                .Include(s => s.Treatment)
+                .ToList();
+        }
     }
 }

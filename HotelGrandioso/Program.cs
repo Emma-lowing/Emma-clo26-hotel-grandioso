@@ -24,6 +24,7 @@ while (true) // Fortsätter visa menyn tills användaren avslutar.
     Console.WriteLine("3. Visa bokningar");
     Console.WriteLine("4. Visa alla rum");
     Console.WriteLine("5. Boka spa");
+    Console.WriteLine("6. Visa spabokningar");
     Console.WriteLine("0. Avsluta");
 
     Console.Write("Välj ett alternativ: ");
@@ -59,6 +60,9 @@ while (true) // Fortsätter visa menyn tills användaren avslutar.
 
         case "5":
             spaService.BookSpa();
+            break;
+        case "6":
+            spaService.ShowSpaBookings();
             break;
 
         case "0":

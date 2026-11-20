@@ -77,7 +77,11 @@ namespace HotelGrandioso.Services
                 Console.WriteLine("Ogiltigt datum.");
                 return null;
             }
-
+            if (checkIn.Date < DateTime.Today)
+            {
+                Console.WriteLine("Du kan inte boka ett datum som redan har passerat.");
+                return null;
+            }
             if (checkOut <= checkIn)
             {
                 Console.WriteLine("Utcheckningsdatum måste vara senare än incheckningsdatum.");
