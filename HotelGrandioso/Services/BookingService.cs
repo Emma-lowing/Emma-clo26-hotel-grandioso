@@ -97,7 +97,7 @@ namespace HotelGrandioso.Services
             {
                 decimal totalPrice = nights * room.PricePerNight;
 
-                Console.WriteLine($"Rum {room.RoomNumber} - {room.RoomType.Name} - {room.SizeM2} m² - {room.PricePerNight} kr/natt - Totalt {totalPrice} kr");
+                Console.WriteLine($"Rum {room.RoomNumber} - Våning {room.Floor} - {room.RoomType.Name} - {room.SizeM2} m² - {room.PricePerNight} kr/natt - Totalt {totalPrice} kr");
             }
         }
 

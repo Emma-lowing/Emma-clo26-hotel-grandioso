@@ -174,6 +174,43 @@ namespace HotelGrandioso.Data
             }
 
             db.SaveChanges(); // Sparar de nya rummen i databasen.
+
+
+            Treatment spaEntre = new Treatment();
+            spaEntre.Name = "Spaentré";
+            spaEntre.DurationMinutes = 60;
+            spaEntre.Price = 150;
+
+            Treatment massage = new Treatment();
+            massage.Name = "Massage";
+            massage.DurationMinutes = 60;
+            massage.Price = 950;
+
+            Treatment pedikyrStorTa = new Treatment();
+            pedikyrStorTa.Name = "Pedikyr stortån";
+            pedikyrStorTa.Price = 350;
+
+            Treatment pedikyrHelFot = new Treatment();
+            pedikyrHelFot.Name = "Pedikyr hel fot";
+            pedikyrHelFot.Price = 650;
+
+            List<Treatment> treatments = new List<Treatment>
+{
+    spaEntre,
+    massage,
+    pedikyrStorTa,
+    pedikyrHelFot
+};
+
+            foreach (Treatment treatment in treatments)
+            {
+                if (!db.Treatments.Any(t => t.Name == treatment.Name)) // Förhindrar att samma behandling läggs in flera gånger.
+                {
+                    db.Treatments.Add(treatment);
+                }
+            }
+
+            db.SaveChanges(); // Sparar de nya spabehandlingarna i databasen.
         }
     }
 }

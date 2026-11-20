@@ -14,6 +14,7 @@ namespace HotelGrandioso.Repositories
             db = context;
         }
 
+        // Metoder för rum och rumsbokningar
 
         //Metod GetAllRooms 
         public List<Room> GetAllRooms()
@@ -94,5 +95,20 @@ namespace HotelGrandioso.Repositories
                     checkIn < b.CheckOut))
                 .ToList();
         }
+
+        // Metoder för spa
+        public List<Treatment> GetAllTreatments() // Hämtar alla spabehandlingar från databasen.
+        {
+            return db.Treatments.ToList();
+        }
+
+        public void AddSpaBooking(SpaBooking spaBooking) // Sparar en spabokning i databasen.
+        {
+            db.SpaBookings.Add(spaBooking);
+            db.SaveChanges();
+
+            Console.WriteLine($"Spabokning skapad med ID: {spaBooking.Id}");
+        }
+
     }
 }
