@@ -50,64 +50,7 @@ Jag använder också `Any()` för att kontrollera om informationen redan finns, 
 
 ## UML-klassdiagram
 
-```mermaid
-classDiagram
-    direction TB
-
-    class RoomType {
-        +int Id
-        +string Name
-        +string Description
-        +List~Room~ Rooms
-    }
-
-    class Room {
-        +int Id
-        +int RoomNumber
-        +int Floor
-        +int SizeM2
-        +decimal PricePerNight
-        +int RoomTypeId
-        +RoomType RoomType
-    }
-
-    class Guest {
-        +int Id
-        +string Name
-    }
-
-    class Booking {
-        +int Id
-        +int GuestId
-        +Guest Guest
-        +int RoomId
-        +Room Room
-        +DateTime CheckIn
-        +DateTime CheckOut
-    }
-
-    class Treatment {
-        +int Id
-        +string Name
-        +decimal DurationMinutes
-        +decimal Price
-    }
-
-    class SpaBooking {
-        +int Id
-        +int GuestId
-        +Guest Guest
-        +DateTime Date
-        +int TreatmentId
-        +Treatment Treatment
-    }
-
-    RoomType "1" -- "0..*" Room
-    Room "1" -- "0..*" Booking
-    Guest "1" -- "0..*" Booking
-    Guest "1" -- "0..*" SpaBooking
-    Treatment "1" -- "0..*" SpaBooking
-```
+![UML-klassdiagram för Hotel Grandioso](hotel-grandioso-uml.png)
 
 ## GDPR
 
@@ -115,9 +58,13 @@ Utvärdera fälten i `Guest` ett i taget. Vad bygger du in, och varför?
 När jag skapade entiteten Guest valde jag att bara spara Id och Name. Jag utgick ifrån att systemet inte ska samla in fler personuppgifter än vad som behövs för att kunna hantera bokningarna.
 
 **Id:** Jag använder ett unikt ID för att kunna skilja gäster åt, även om två gäster har samma namn.
+
 **Name** Jag sparar gästens namn för att kunna se vem som har gjort en bokning.
+
 **HariColor:** Jag valde att inte spara hårfärg eftersom det inte behövs för att boka ett hotellrum eller en spabehandling.
+
 **HeightCM:** Jag valde att inte spara lägnd eftersom det inte är relevant för bokningssystemet.
+
 **Religion:** Jag valde att inte spara religion eftersom det inte behövs för bokningen. Religion är dessutom en känslig personuppgift enligt GDPR.
 
 Mitt mål har varit att följa principen om dataminimering, alltså att bara samla in de personuppgifter som behövs för systemets syfte.
@@ -135,5 +82,9 @@ Jag valde att separera databasarbetet från resten av programmet för att göra 
 
 ## Tekniker
 
-- C# / .NET 10
-- Entity Framework Core
+- **C# / .NET 10** – Programmeringsspråk och ramverk.
+- **Entity Framework Core** – Används för att arbeta med databasen genom C#-klasser.
+- **SQLite** – Databasen där rum, gäster och bokningar sparas.
+- **Code First och migrationer** – Används för att skapa och uppdatera databasen utifrån entiteterna.
+- **LINQ** – Används för att söka, filtrera och hämta information från databasen.
+- **Repository-mönstret** – Samlar databasarbetet i klassen `HotelRepository`.
