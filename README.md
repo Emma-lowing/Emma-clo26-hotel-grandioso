@@ -4,11 +4,22 @@
 
 ## Så kör du projektet
 
-1. Forka repot på GitHub och klona din fork
-2. Öppna `HotelGrandioso.slnx` i Visual Studio (eller öppna mappen i VS Code)
-3. Tryck **F5** för att starta
+1. Forka repot på GitHub och klona din fork.
+2. Öppna `HotelGrandioso.slnx` i Visual Studio (eller öppna mappen i VS Code).
+3. Ange miljövariabeln `HOTEL_DB` innan programmet startas. Den används för att ansluta till SQLite-databasen.
 
-Via terminalen:
+   I PowerShell skriver du:
+
+   ```powershell
+   $env:HOTEL_DB = "Data Source=hotel.db"
+   ```
+
+4. Kör databasens migrationer enligt instruktionerna under **Databas** om databasen inte redan är skapad.
+5. Starta programmet med **F5** i Visual Studio, förutsatt att miljövariabeln är tillgänglig för programmet.
+
+**Via terminalen:**
+
+När miljövariabeln har angetts i samma terminal kan programmet startas med:
 
 ```bash
 dotnet run --project HotelGrandioso
@@ -50,20 +61,21 @@ Jag använder också `Any()` för att kontrollera om informationen redan finns, 
 
 ## UML-klassdiagram
 
-![UML-klassdiagram för Hotel Grandioso](hotel-grandioso-uml.png)
+
+<img width="2400" height="1570" alt="hotel-grandioso2-uml" src="https://github.com/user-attachments/assets/ec657300-077f-4ff1-a6da-e8e3d70f6f51" />
+
 
 ## GDPR
 
-Utvärdera fälten i `Guest` ett i taget. Vad bygger du in, och varför?
 När jag skapade entiteten Guest valde jag att bara spara Id och Name. Jag utgick ifrån att systemet inte ska samla in fler personuppgifter än vad som behövs för att kunna hantera bokningarna.
 
 **Id:** Jag använder ett unikt ID för att kunna skilja gäster åt, även om två gäster har samma namn.
 
-**Name** Jag sparar gästens namn för att kunna se vem som har gjort en bokning.
+**Name:** Jag sparar gästens namn för att kunna se vem som har gjort en bokning.
 
-**HariColor:** Jag valde att inte spara hårfärg eftersom det inte behövs för att boka ett hotellrum eller en spabehandling.
+**HairColor:** Jag valde att inte spara hårfärg eftersom det inte behövs för att boka ett hotellrum eller en spabehandling.
 
-**HeightCM:** Jag valde att inte spara lägnd eftersom det inte är relevant för bokningssystemet.
+**HeightCm:** Jag valde att inte spara längd eftersom det inte är relevant för bokningssystemet.
 
 **Religion:** Jag valde att inte spara religion eftersom det inte behövs för bokningen. Religion är dessutom en känslig personuppgift enligt GDPR.
 
