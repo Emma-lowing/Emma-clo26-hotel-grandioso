@@ -8,12 +8,12 @@ namespace HotelGrandioso.Services
     {
         private readonly HotelRepository repository;
 
-        public BookingService(HotelRepository repository) // Tar emot och sparar det Repository som bokningstjänsten ska använda.
+        public BookingService(HotelRepository repository) // Tar emot Repository utifrån för att hålla databasarbetet separerat från bokningsflödet.
         {
             this.repository = repository;
         }
 
-        public void BookRoom() // Håller ihop hela bokningsprocessen och anropar de mindre metoderna.
+        public void BookRoom() // Delar upp bokningsprocessen i mindre metoder för att göra koden lättare att förstå och underhålla.
         {
             (DateTime checkIn, DateTime checkOut)? dates = ReadDates();
 
@@ -56,7 +56,7 @@ namespace HotelGrandioso.Services
                 return;
 
             BookingResult result = repository.AddBooking(booking);
-            switch (result)
+            switch (result) // Hanterar meddelandena här för att hålla användarinteraktionen separerad från databasarbetet.
             {
                 case BookingResult.Success:
                     Console.WriteLine($"Bokning skapad med ID: {booking.Id}");
@@ -72,7 +72,7 @@ namespace HotelGrandioso.Services
             }
         }
 
-        private (DateTime checkIn, DateTime checkOut)? ReadDates() // Läser in och kontrollerar in- och utcheckningsdatum.
+        private (DateTime checkIn, DateTime checkOut)? ReadDates() // Validerar datumen för att förhindra bokningar med ogiltiga datumintervall.
         {
             Console.Write("Ange incheckningsdatum (ÅÅÅÅ-MM-DD): ");
             string? checkInInput = Console.ReadLine();
@@ -105,7 +105,7 @@ namespace HotelGrandioso.Services
             return (checkIn, checkOut);
         }
 
-        private void ShowAvailableRooms(List<Room> availableRooms, DateTime checkIn, DateTime checkOut) // Visar lediga rum med storlek, pris per natt och totalpris.
+        private void ShowAvailableRooms(List<Room> availableRooms, DateTime checkIn, DateTime checkOut) // Visar även totalpriset så att användaren kan jämföra rummen innan en bokning görs.
         {
             Console.WriteLine("\nLediga rum:");
 
@@ -119,7 +119,7 @@ namespace HotelGrandioso.Services
             }
         }
 
-        private Room? SelectRoom(List<Room> availableRooms) // Låter användaren välja ett rum och kontrollerar att det finns bland de lediga rummen.
+        private Room? SelectRoom(List<Room> availableRooms) // Begränsar valet till lediga rum för att förhindra att användaren väljer ett upptaget rum.
         {
             Console.Write("Välj rumsnummer: ");
             string? roomInput = Console.ReadLine();
@@ -141,7 +141,7 @@ namespace HotelGrandioso.Services
             return selectedRoom;
         }
 
-        private string? ReadGuestName() // Läser in gästens namn och kontrollerar att det inte är tomt.
+        private string? ReadGuestName() // Förhindrar att bokningar skapas utan ett angivet gästnamn.
         {
             Console.Write("Ange gästens namn: ");
             string? guestName = Console.ReadLine();
@@ -155,7 +155,7 @@ namespace HotelGrandioso.Services
             return guestName;
         }
 
-        private bool ConfirmBooking(Booking booking, Room selectedRoom) // Visar bokningssammanfattningen och frågar om användaren vill bekräfta.
+        private bool ConfirmBooking(Booking booking, Room selectedRoom) // Låter användaren kontrollera bokningsuppgifterna och totalpriset innan bokningen sparas.
         {
             int nights = (booking.CheckOut - booking.CheckIn).Days;
             decimal totalPrice = nights * selectedRoom.PricePerNight;
@@ -179,7 +179,7 @@ namespace HotelGrandioso.Services
 
             return true;
         }
-        public void SearchAvailableRooms()
+        public void SearchAvailableRooms() // Återanvänder befintliga metoder så att användaren kan söka efter lediga rum utan att behöva påbörja en bokning.
         {
             (DateTime checkIn, DateTime checkOut)? dates = ReadDates();
 
@@ -195,7 +195,7 @@ namespace HotelGrandioso.Services
             }
             ShowAvailableRooms(availableRooms, checkIn, checkOut);
         }
-        public void CancelRoomBooking() // Låter användaren avboka en befintlig bokning.
+        public void CancelRoomBooking() 
         {
             Console.Write("Ange boknings-ID: ");
             string? input = Console.ReadLine();

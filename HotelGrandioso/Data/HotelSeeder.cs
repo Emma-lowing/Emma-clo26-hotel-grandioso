@@ -173,7 +173,7 @@ namespace HotelGrandioso.Data
                 }
             }
 
-            db.SaveChanges(); // Sparar de nya rummen i databasen.
+            db.SaveChanges();
 
 
             Treatment spaEntre = new Treatment();
@@ -210,7 +210,7 @@ namespace HotelGrandioso.Data
                 }
             }
 
-            db.SaveChanges(); // Sparar de nya spabehandlingarna i databasen.
+            db.SaveChanges(); 
         }
     }
 }

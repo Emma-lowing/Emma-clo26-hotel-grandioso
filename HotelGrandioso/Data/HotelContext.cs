@@ -17,8 +17,10 @@ namespace HotelGrandioso.Data
 
 
         protected override void
+       
         OnConfiguring(DbContextOptionsBuilder options)
         {
+            // Använder en miljövariabel för att kunna ändra databasanslutningen utan att ändra källkoden.
             string? connectionString = Environment.GetEnvironmentVariable("HOTEL_DB");
             if (string.IsNullOrEmpty(connectionString))
             {

@@ -7,19 +7,19 @@ namespace HotelGrandioso.Services
     {
         private readonly HotelRepository repository;
 
-        public SpaService(HotelRepository repository) // Tar emot och sparar det Repository som spabokningarna ska använda.
+        public SpaService(HotelRepository repository) // Tar emot Repository utifrån för att hålla databasarbetet separerat från spabokningsflödet.
         {
             this.repository = repository;
         }
 
-        public void BookSpa() // Låter gästen välja en eller flera spabehandlingar.
+        public void BookSpa() 
         {
             List<Treatment> treatments = repository.GetAllTreatments();
             List<Treatment> selectedTreatments = new List<Treatment>();
 
             Console.WriteLine("\n=== Spa Grandioso ===");
 
-            while (true)
+            while (true) // Använder en loop för att gästen ska kunna välja flera behandlingar vid samma bokningstillfälle.
             {
                 Console.WriteLine("\nTillgängliga behandlingar:");
 
@@ -74,10 +74,11 @@ namespace HotelGrandioso.Services
                 Console.WriteLine("Spabokningen avbröts.");
                 return;
             }
-            Guest guest = new Guest();
+            Guest guest = new Guest(); // Skapar gästen utanför loopen så att alla valda behandlingar kopplas till samma gäst.
             guest.Name = guestName;
 
-            foreach (Treatment treatment in selectedTreatments)
+
+            foreach (Treatment treatment in selectedTreatments) // Sparar varje behandling som en egen spabokning så att flera behandlingar kan kopplas till samma gäst.
             {
                 SpaBooking spaBooking = new SpaBooking();
 
@@ -92,7 +93,7 @@ namespace HotelGrandioso.Services
             Console.WriteLine("Alla spabehandlingar har bokats!");
         }
 
-        private Treatment? SelectTreatment(List<Treatment> treatments) // Läser användarens val och kontrollerar att behandlingen finns.
+        private Treatment? SelectTreatment(List<Treatment> treatments) // Kontrollerar att behandlingen finns för att förhindra bokning av en ogiltig behandling.
         {
             Console.Write("Välj behandlingens nummer: ");
             string? input = Console.ReadLine();
@@ -114,7 +115,7 @@ namespace HotelGrandioso.Services
             return selectedTreatment;
         }
 
-        private DateOnly? ReadSpaDate() // Läser in datumet för spabesöket och kontrollerar att det är giltigt.
+        private DateOnly? ReadSpaDate() // Validerar datumet för att förhindra bokningar med ogiltiga eller passerade datum. 
         {
             Console.Write("Ange datum för spabesöket (ÅÅÅÅ-MM-DD): ");
             string? input = Console.ReadLine();
@@ -134,7 +135,7 @@ namespace HotelGrandioso.Services
             return date;
         }
 
-        private string? ReadGuestName() // Läser in gästens namn och kontrollerar att det inte är tomt.
+        private string? ReadGuestName() // Förhindrar att spabokningar skapas utan ett angivet gästnamn.
         {
             Console.Write("Ange gästens namn: ");
             string? guestName = Console.ReadLine();
@@ -148,7 +149,7 @@ namespace HotelGrandioso.Services
             return guestName.Trim();
         }
 
-        public void ShowSpaBookings()//Visar alla sparade spabokningar med gäst, datum, behandling och pris.
+        public void ShowSpaBookings()
         {
             List<SpaBooking> spaBookings = repository.GetAllSpaBookings();
             Console.WriteLine("\n=== Spabokningar ===");

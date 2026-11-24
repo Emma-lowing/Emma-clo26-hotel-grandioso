@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 namespace HotelGrandioso.Repositories
 {
 
+    // Använder en enum för att skilja mellan olika bokningsresultat
+    // utan att Repository behöver hantera meddelanden till användaren.
     public enum BookingResult
     {
         Success,
@@ -23,8 +25,8 @@ namespace HotelGrandioso.Repositories
 
         // Metoder för rum och rumsbokningar
 
-        //Metod GetAllRooms 
-        public List<Room> GetAllRooms()
+       
+        public List<Room> GetAllRooms() // Inkluderar rumstypen så att användargränssnittet kan visa rummets typ.
         {
             return db.Rooms
                 .Include(r => r.RoomType)
@@ -32,9 +34,10 @@ namespace HotelGrandioso.Repositories
         }
 
 
-        // Metod AddBooking som sparar en ny bokning i databasen.
-        public BookingResult AddBooking(Booking booking)
+
+        public BookingResult AddBooking(Booking booking)// Kontrollerar tillgängligheten igen innan bokningen sparas för att förhindra dubbelbokningar.
         {
+            // Använder strikta jämförelser så att ett rum kan bokas igen samma dag som en annan gäst checkar ut.
             bool isBooked = db.Bookings.Any(existing => existing.RoomId == booking.RoomId && existing.CheckIn < booking.CheckOut && booking.CheckIn < existing.CheckOut);
             if (isBooked)
             {
@@ -50,23 +53,23 @@ namespace HotelGrandioso.Repositories
             return BookingResult.Success;
         }
 
-        //Metod AddGuest som sparar en ny gäst i databasen.
+        
         public void AddGuest(Guest guest)
         {
             db.Guests.Add(guest);
             db.SaveChanges();
         }
 
-        // Hämtar alla bokningar med tillhörande gäst och rum.
-        public List<Booking> GetAllBookings()
+        
+        public List<Booking> GetAllBookings()// Inkluderar gäst och rum så att bokningsinformationen kan visas utan separata databasfrågor.
         {
             return db.Bookings
                 .Include(b => b.Guest)
                 .Include(b => b.Room)
                 .ToList();
         }
-        // Metod tar bort en bokning från databasen med hjälp av dess ID.
-        public bool CancelBooking(int bookingId)
+       
+        public bool CancelBooking(int bookingId) // Använder bokningens unika ID för att säkerställa att rätt bokning avbokas.
         {
             Booking? booking = db.Bookings
                 .FirstOrDefault(b => b.Id == bookingId);
@@ -82,15 +85,15 @@ namespace HotelGrandioso.Repositories
             return true;
         }
 
-        public decimal CalculateBookingPrice(Booking booking)
+        public decimal CalculateBookingPrice(Booking booking) // Beräknar priset utifrån rummets pris per natt och bokningens längd.
         {
             Room room = db.Rooms.First(r => r.Id == booking.RoomId);
             int nights = (booking.CheckOut - booking.CheckIn).Days;
             return nights * room.PricePerNight;
         }
 
-        // Metod som visar tillgängliga rum 
-        public List<Room> GetAvailableRooms(DateTime checkIn, DateTime checkOut)
+        
+        public List<Room> GetAvailableRooms(DateTime checkIn, DateTime checkOut) // Utesluter rum med överlappande bokningar för att endast returnera lediga rum.
         {
             return db.Rooms
                 .Include(r => r.RoomType)
@@ -102,12 +105,12 @@ namespace HotelGrandioso.Repositories
         }
 
         // Metoder för spa
-        public List<Treatment> GetAllTreatments() // Hämtar alla spabehandlingar från databasen.
+        public List<Treatment> GetAllTreatments() 
         {
             return db.Treatments.ToList();
         }
 
-        public int AddSpaBooking(SpaBooking spaBooking)
+        public int AddSpaBooking(SpaBooking spaBooking) // Returnerar bokningens ID så att användargränssnittet kan visa en bekräftelse.
         {
             db.SpaBookings.Add(spaBooking);
             db.SaveChanges();
@@ -115,7 +118,7 @@ namespace HotelGrandioso.Repositories
             return spaBooking.Id;
         }
 
-        public List<SpaBooking> GetAllSpaBookings() // Hämtar alla spabokningar tillsammans med gäst och behandling.
+        public List<SpaBooking> GetAllSpaBookings() // Inkluderar gäst och behandling så att fullständig bokningsinformation kan visas.
         {
             return db.SpaBookings
                 .Include(s => s.Guest)
