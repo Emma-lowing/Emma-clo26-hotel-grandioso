@@ -4,6 +4,7 @@
 
 ## Så kör du projektet
 
+För att kunna köra projektet behöver du ha .NET 10 SDK installerat.
 1. Forka repot på GitHub och klona din fork.
 2. Öppna `HotelGrandioso.slnx` i Visual Studio (eller öppna mappen i VS Code).
 3. Ange miljövariabeln `HOTEL_DB` innan programmet startas. Den används för att ansluta till SQLite-databasen.
@@ -19,7 +20,7 @@
 
 **Via terminalen:**
 
-När miljövariabeln har angetts i samma terminal kan programmet startas med:
+Öppna terminalen i projektets rotmapp (där HotelGrandioso.slnx finns). När miljövariabeln har angetts i samma terminal kan programmet startas med:
 
 ```bash
 dotnet run --project HotelGrandioso
@@ -62,6 +63,7 @@ Databasen innehåller information om rum, rumstyper, gäster, rumsbokningar, beh
 
 - **Databas:** SQLite.
 - **Migrationer:** Jag använder Entity Framework Core Code First. Jag har skapat den första migrationen i Visual Studios Package Manager Console med `Add-Migration InitialCreate`. Befintliga migrationer körs automatiskt när programmet startas.
+  
 ## Seeding
 
 Jag har skapat klassen `HotelSeeder` för att lägga in hotellets rum, rumstyper och spabehandlingar i databasen.
@@ -93,7 +95,7 @@ När jag skapade entiteten Guest valde jag att bara spara Id och Name. Jag utgic
 
 Mitt mål har varit att följa principen om dataminimering, alltså att bara samla in de personuppgifter som behövs för systemets syfte.
 
->
+
 ## Designmönster
 
 Jag har använt Repository-mönstret genom att skapa klassen `HotelRepository`.
@@ -108,7 +110,7 @@ För att behålla denna ansvarsfördelning returnerar `HotelRepository` resultat
 
 På så sätt behöver `HotelRepository` inte känna till hur informationen presenteras för användaren.
 
->
+
 
 ## Tekniker
 
