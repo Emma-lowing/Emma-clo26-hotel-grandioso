@@ -3,11 +3,12 @@ using HotelGrandioso.Data;
 using HotelGrandioso.Models;
 using HotelGrandioso.Repositories;
 using HotelGrandioso.Services;
+using Microsoft.EntityFrameworkCore;
 
 
 
 using var db = new HotelContext(); // Skapar en databaskontext som ger oss tillgång till databasen.
-
+db.Database.Migrate(); //Kör migrationerna automatiskt så att tabellerna finns även när programmet startas från en ren klon. 
 HotelSeeder.Seed(db); // Lägger till hotellets rumstyper och rum om de inte redan finns.
 
 HotelRepository repository = new HotelRepository(db); // Skapar ett Repository som använder vår databaskontext.
@@ -23,8 +24,9 @@ while (true) // Fortsätter visa menyn tills användaren avslutar.
     Console.WriteLine("2. Avboka rum");
     Console.WriteLine("3. Visa bokningar");
     Console.WriteLine("4. Visa alla rum");
-    Console.WriteLine("5. Boka spa");
-    Console.WriteLine("6. Visa spabokningar");
+    Console.WriteLine("5. Visa lediga rum");
+    Console.WriteLine("6. Boka spa");
+    Console.WriteLine("7. Visa spabokningar");
     Console.WriteLine("0. Avsluta");
 
     Console.Write("Välj ett alternativ: ");
@@ -57,11 +59,14 @@ while (true) // Fortsätter visa menyn tills användaren avslutar.
                 Console.WriteLine($"Rum {room.RoomNumber} - {room.RoomType.Name} - {room.PricePerNight} kr/natt");
             }
             break;
-
         case "5":
+            bookingService.SearchAvailableRooms();
+            break;
+
+        case "6":
             spaService.BookSpa();
             break;
-        case "6":
+        case "7":
             spaService.ShowSpaBookings();
             break;
 
@@ -73,21 +78,3 @@ while (true) // Fortsätter visa menyn tills användaren avslutar.
             break;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

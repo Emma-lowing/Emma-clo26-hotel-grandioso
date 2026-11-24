@@ -5,6 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HotelGrandioso.Repositories
 {
+
+    public enum BookingResult
+    {
+        Success,
+        AlreadyBooked,
+        InvalidDates
+    }
     internal class HotelRepository
     {
         private readonly HotelContext db;
@@ -26,23 +33,21 @@ namespace HotelGrandioso.Repositories
 
 
         // Metod AddBooking som sparar en ny bokning i databasen.
-        public void AddBooking(Booking booking)
+        public BookingResult AddBooking(Booking booking)
         {
             bool isBooked = db.Bookings.Any(existing => existing.RoomId == booking.RoomId && existing.CheckIn < booking.CheckOut && booking.CheckIn < existing.CheckOut);
             if (isBooked)
             {
-                Console.WriteLine("Rummet är redan bokat under dessa datum.");
-                return;
+                return BookingResult.AlreadyBooked;
             }
            
             if (booking.CheckOut <= booking.CheckIn)
             {
-                Console.WriteLine("Utcheckningsdatum måste vara senare än incheckningsdatum.");
-                return;
+                return BookingResult.InvalidDates;
             }
             db.Bookings.Add(booking);
             db.SaveChanges();
-            Console.WriteLine($"Bokning skapad med ID: {booking.Id}");
+            return BookingResult.Success;
         }
 
         //Metod AddGuest som sparar en ny gäst i databasen.
@@ -102,12 +107,12 @@ namespace HotelGrandioso.Repositories
             return db.Treatments.ToList();
         }
 
-        public void AddSpaBooking(SpaBooking spaBooking) // Sparar en spabokning i databasen.
+        public int AddSpaBooking(SpaBooking spaBooking)
         {
             db.SpaBookings.Add(spaBooking);
             db.SaveChanges();
 
-            Console.WriteLine($"Spabokning skapad med ID: {spaBooking.Id}");
+            return spaBooking.Id;
         }
 
         public List<SpaBooking> GetAllSpaBookings() // Hämtar alla spabokningar tillsammans med gäst och behandling.

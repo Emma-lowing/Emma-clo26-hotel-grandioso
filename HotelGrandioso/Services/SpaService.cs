@@ -85,7 +85,8 @@ namespace HotelGrandioso.Services
                 spaBooking.TreatmentId = treatment.Id;
                 spaBooking.Date = spaDate.Value.ToDateTime(TimeOnly.MinValue);
 
-                repository.AddSpaBooking(spaBooking);
+                int bookingId = repository.AddSpaBooking(spaBooking);
+                Console.WriteLine($"Spabokning skapad med ID: {bookingId}");
             }
 
             Console.WriteLine("Alla spabehandlingar har bokats!");

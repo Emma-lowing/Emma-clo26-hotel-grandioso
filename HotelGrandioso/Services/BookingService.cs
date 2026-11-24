@@ -55,7 +55,21 @@ namespace HotelGrandioso.Services
             if (!ConfirmBooking(booking, selectedRoom))
                 return;
 
-            repository.AddBooking(booking);
+            BookingResult result = repository.AddBooking(booking);
+            switch (result)
+            {
+                case BookingResult.Success:
+                    Console.WriteLine($"Bokning skapad med ID: {booking.Id}");
+                    break;
+
+                case BookingResult.AlreadyBooked:
+                    Console.WriteLine("Rummet är redan bokat under dessa datum.");
+                    break;
+
+                case BookingResult.InvalidDates:
+                    Console.WriteLine("Utcheckningsdatum måste vara senare än incheckningsdatum.");
+                    break;
+            }
         }
 
         private (DateTime checkIn, DateTime checkOut)? ReadDates() // Läser in och kontrollerar in- och utcheckningsdatum.
@@ -165,7 +179,22 @@ namespace HotelGrandioso.Services
 
             return true;
         }
+        public void SearchAvailableRooms()
+        {
+            (DateTime checkIn, DateTime checkOut)? dates = ReadDates();
 
+            if (dates == null)
+                return;
+            DateTime checkIn = dates.Value.checkIn;
+            DateTime checkOut = dates.Value.checkOut;
+            List<Room> availableRooms = repository.GetAvailableRooms(checkIn, checkOut);
+            if (availableRooms.Count == 0)
+            {
+                Console.WriteLine("Det finns inga lediga rum under den valda perioden.");
+                return;
+            }
+            ShowAvailableRooms(availableRooms, checkIn, checkOut);
+        }
         public void CancelRoomBooking() // Låter användaren avboka en befintlig bokning.
         {
             Console.Write("Ange boknings-ID: ");
