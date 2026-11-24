@@ -14,7 +14,7 @@
    $env:HOTEL_DB = "Data Source=hotel.db"
    ```
 
-4. Kör databasens migrationer enligt instruktionerna under **Databas** om databasen inte redan är skapad.
+4. Databasen skapas och uppdateras automatiskt när programmet startas. Du behöver därför inte köra migrationerna manuellt.
 5. Starta programmet med **F5** i Visual Studio, förutsatt att miljövariabeln är tillgänglig för programmet.
 
 **Via terminalen:**
@@ -24,6 +24,22 @@ När miljövariabeln har angetts i samma terminal kan programmet startas med:
 ```bash
 dotnet run --project HotelGrandioso
 ```
+
+
+## Funktionalitet
+
+Programmet innehåller följande funktioner:
+
+- Boka hotellrum.
+- Avboka hotellrum.
+- Visa alla rumsbokningar.
+- Visa alla hotellrum med rumstyp och pris.
+- Visa lediga rum under ett valt datumintervall utan att behöva göra en bokning.
+- Boka en eller flera spabehandlingar.
+- Visa alla spabokningar.
+
+Programmet beräknar även totalpriset för bokningar och förhindrar dubbelbokningar av hotellrum.
+
 ## Databas
 
 Projektet använder SQLite som databas och Entity Framework Core med Code First.
@@ -38,18 +54,14 @@ För att ange anslutningssträngen i PowerShell:
 $env:HOTEL_DB = "Data Source=hotel.db"
 ```
 
-För att skapa eller uppdatera databasen med befintliga migrationer kan man använda Package Manager Console i Visual Studio:
+Jag använder `db.Database.Migrate()` i `Program.cs` för att automatiskt köra befintliga migrationer när programmet startas. På så sätt skapas databasen och tabellerna även när programmet startas från en ren klon av projektet.
 
-```powershell
-Update-Database
-```
+Migrationerna körs innan `HotelSeeder.Seed(db)` anropas för att säkerställa att tabellerna finns innan information läggs till.
 
 Databasen innehåller information om rum, rumstyper, gäster, rumsbokningar, behandlingar och spabokningar.
 
 - **Databas:** SQLite.
-- **Migrationer:** Jag använder Entity Framework Core Code First. Jag skapar migrationer i Visual Studios Package Manager Console med `Add-Migration InitialCreate` och kör dem med `Update-Database`. Innan kommandona körs anger jag databasanslutningen med `$env:HOTEL_DB = "Data Source=hotel.db"`.
-
-
+- **Migrationer:** Jag använder Entity Framework Core Code First. Jag har skapat den första migrationen i Visual Studios Package Manager Console med `Add-Migration InitialCreate`. Befintliga migrationer körs automatiskt när programmet startas.
 ## Seeding
 
 Jag har skapat klassen `HotelSeeder` för att lägga in hotellets rum, rumstyper och spabehandlingar i databasen.
@@ -86,9 +98,15 @@ Mitt mål har varit att följa principen om dataminimering, alltså att bara sam
 
 Jag har använt Repository-mönstret genom att skapa klassen `HotelRepository`.
 
-`HotelRepository` ansvarar för att hämta, skapa och ta bort information i databasen, exempelvis bokningar och rum.
+`HotelRepository` ansvarar för att hämta, skapa och ta bort information i databasen, exempelvis bokningar, rum och spabokningar.
 
-Jag valde att separera databasarbetet från resten av programmet för att göra koden tydligare och lättare att underhålla. På så sätt behöver jag inte skriva databasfrågor direkt i `Program.cs` eller `BookingService.cs`.
+Jag valde att separera databasarbetet från resten av programmet för att göra koden tydligare och lättare att underhålla. På så sätt behöver jag inte skriva databasfrågor direkt i `Program.cs`, `BookingService.cs` eller `SpaService.cs`.
+
+`BookingService` och `SpaService` ansvarar för bokningsprocesserna och kommunikationen med användaren, medan `HotelRepository` ansvarar för databasarbetet.
+
+För att behålla denna ansvarsfördelning returnerar `HotelRepository` resultat istället för att skriva ut meddelanden i konsolen. Vid rumsbokning använder jag en enum, `BookingResult`, för att skilja mellan en lyckad bokning, ett redan bokat rum och ogiltiga datum. Vid spabokning returneras istället bokningens ID.
+
+På så sätt behöver `HotelRepository` inte känna till hur informationen presenteras för användaren.
 
 >
 
